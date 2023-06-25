@@ -12,16 +12,16 @@ The following steps will get you up and running with a local development environ
 ```bash
 git clone https://github.com/Importantus/speiseplan-tray.git
 ```
-4. Change into the directory and install dependencies
+2. Change into the directory and install dependencies
 ```bash
 cd speiseplan-tray
 npm install
 ```
-5. Start the local development server
+3. Start the local development server
 ```bash
 npm run dev
 ```
-6. Install and use [gitmoji](#gitmoji) to commit
+4. Install and use [gitmoji](#gitmoji) to commit
 
 ### Build
 Run `npm run build` to build the app for production. The build artifacts will be stored in the `release/` directory.
