@@ -70,7 +70,7 @@ class TrayWindow extends BrowserWindow {
     })
 
     this.addListener("blur", () => {
-      this.hide()
+      if (process.platform !== "linux") this.hide()
     })
 
     // Test active push message to Renderer-process.
