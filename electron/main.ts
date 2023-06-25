@@ -46,7 +46,7 @@ app.whenReady().then(() => {
 
 
 class TrayWindow extends BrowserWindow {
-  private static instance: TrayWindow;
+  private static instance: TrayWindow | null = null;
 
   private constructor() {
     super({
@@ -62,6 +62,11 @@ class TrayWindow extends BrowserWindow {
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
       }
+    })
+
+    this.addListener("closed", () => {
+      this.destroy()
+      TrayWindow.instance = null
     })
 
     this.addListener("blur", () => {
