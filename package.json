@@ -4,7 +4,8 @@
   "version": "0.5.1",
   "description": "Zeigt den Speiseplan der Mensa und Cafeteria Lübeck im System-Tray an.",
   "author": {
-    "name": "Sören Fischer"
+    "name": "Importantus",
+    "email": "importantus@mailbox.org"
   },
   "scripts": {
     "dev": "vite",
