@@ -14,7 +14,7 @@ process.env.DIST = path.join(__dirname, '../dist')
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public')
 
 
-let tray
+let tray: Tray | null = null;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 
@@ -27,12 +27,14 @@ app.setLoginItemSettings({
 })
 
 app.whenReady().then(() => {
-  const icon = nativeImage.createFromPath(path.join(process.env.PUBLIC, 'icon.ico'))
+  const iconFile = process.platform === "win32" ? 'icon.ico' : 'icon.png';
+  const icon = nativeImage.createFromPath(path.join(process.env.PUBLIC, iconFile))
   tray = new Tray(icon)
 
   const contextMenu = Menu.buildFromTemplate([
     { label: "Beenden", role: "quit" },
-    { label: "Schließen", click: () => { TrayWindow.get().hide() } }
+    { label: "Schließen", click: () => { TrayWindow.get().hide() } },
+    { label: "Zeige Speiseplan", click: () => { TrayWindow.get().show() } }
   ])
 
   tray.setToolTip('Zeige Speiseplan')
@@ -83,8 +85,8 @@ class TrayWindow extends BrowserWindow {
 
   showInPlace(x: number, y: number) {
     this.setBounds({
-      x: x - this.getSize()[0] / 2,
-      y: y - this.getSize()[1] - 30
+      x: x + this.getSize()[0] / 2,
+      y: y + this.getSize()[1] - 30
     })
     super.show()
   }
