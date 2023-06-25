@@ -20,6 +20,19 @@
     ],
     artifactName: "${productName}_${version}.${ext}",
   },
+  linux: {
+    icon: "public/icon.png",
+    desktop: {
+      StartupNotify: "false",
+      Encoding: "UTF-8",
+      MimeType: "x-scheme-handler/deeplink",
+    },
+    target: ["AppImage", "deb"],
+    artifactName: "${productName}_${version}.${ext}",
+  },
+  deb: {
+    priority: "optional",
+  },
   nsis: {
     oneClick: false,
     perMachine: false,
