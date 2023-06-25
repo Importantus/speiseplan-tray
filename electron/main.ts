@@ -90,8 +90,8 @@ class TrayWindow extends BrowserWindow {
 
   showInPlace(x: number, y: number) {
     this.setBounds({
-      x: x + this.getSize()[0] / 2,
-      y: y + this.getSize()[1] - 30
+      x: x - this.getSize()[0] / 2,
+      y: y - this.getSize()[1] - 30
     })
     super.show()
   }
