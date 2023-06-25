@@ -1,12 +1,51 @@
-# Vue 3 + TypeScript + Vite
+# Speiseplan Tray
+This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh). It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
+It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/).
+## Features
+- 💻 Tray application for Windows
+- 📅 Shows the menu for the current day
+- 🥬 Lets you filter by food type
+## Local Setup
+The following steps will get you up and running with a local development environment. We assume you have Node.js and npm installed:
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+1. Clone the repo with 
+```bash
+git clone https://github.com/Importantus/speiseplan-tray.git
+```
+4. Change into the directory and install dependencies
+```bash
+cd speiseplan-tray
+npm install
+```
+5. Start the local development server
+```bash
+npm run dev
+```
+6. Install and use [gitmoji](#gitmoji) to commit
 
-## Recommended IDE Setup
+### Build
+Run `npm run build` to build the app for production. The build artifacts will be stored in the `release/` directory.
+
+### Gitmoji
+
+This project uses [gitmoji](https://gitmoji.carloscuesta.me/) to make commits more expressive.
+
+#### Installation
+
+```bash
+npm install -g gitmoji-cli
+```
+
+#### Initialize as git hook
+
+```bash
+gitmoji -i
+```
+### Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Type Support For `.vue` Imports in TS
+### Type Support For `.vue` Imports in TS
 
 TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
 
