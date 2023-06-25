@@ -32,6 +32,10 @@ export const availableFilters: Filter[] = [
     {
         name: "cafeteria",
         func: (meal: Meal) => meal.location === "Cafeteria"
+    },
+    {
+        name: "ohne Weizen",
+        func: (meal: Meal) => !meal.allergens.find((allergen) => allergen.code === "GlW")
     }
 ];
 
