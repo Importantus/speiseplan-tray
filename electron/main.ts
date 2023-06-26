@@ -42,7 +42,6 @@ app.whenReady().then(() => {
   tray.addListener("click", (_e, _r, p) => {
 
     let bounds = tray?.getBounds();
-    bounds = undefined
     const { x, y } = bounds || p || screen.getCursorScreenPoint() || {};
 
     if (x && y) {
@@ -98,13 +97,14 @@ class TrayWindow extends BrowserWindow {
   }
 
   showInPlace(x: number, y: number) {
+    if (this.isVisible()) {
+      this.hide();
+    }
     if (typeof x === "number" && typeof y === "number") {
-      console.log(x, y)
-      console.log(this.getSize()[0], this.getSize()[1])
       try {
         this.setBounds(this.calculatePosition(x, y))
       } catch (err) {
-        console.log(err)
+        // ignore
       }
     }
     super.show()
