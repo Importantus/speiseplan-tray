@@ -99,6 +99,7 @@ class TrayWindow extends BrowserWindow {
   showInPlace(x: number, y: number) {
     if (this.isVisible()) {
       this.hide();
+      return;
     }
     if (typeof x === "number" && typeof y === "number") {
       try {
