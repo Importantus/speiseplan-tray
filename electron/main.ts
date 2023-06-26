@@ -40,7 +40,13 @@ app.whenReady().then(() => {
   tray.setToolTip('Zeige Speiseplan')
   tray.setContextMenu(contextMenu)
   tray.addListener("click", (_e, _r, p) => {
-    TrayWindow.get().showInPlace(p.x, p.y)
+    if (tray?.getBounds()) {
+      TrayWindow.get().showInPlace(tray.getBounds().x + 20, tray.getBounds().y + 20)
+    } else if (p.x && p.y) {
+      TrayWindow.get().showInPlace(p.x, p.y)
+    } else {
+      TrayWindow.get().show()
+    }
   })
 })
 
@@ -89,10 +95,18 @@ class TrayWindow extends BrowserWindow {
   }
 
   showInPlace(x: number, y: number) {
-    this.setBounds({
-      x: x - this.getSize()[0] / 2,
-      y: y - this.getSize()[1] - 30
-    })
+    if (typeof x === "number" && typeof y === "number") {
+      console.log(x, y)
+      console.log(this.getSize()[0], this.getSize()[1])
+      try {
+        this.setBounds({
+          x: x - this.getSize()[0] / 2,
+          y: y - this.getSize()[1] - 30
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
     super.show()
   }
 
