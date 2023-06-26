@@ -41,14 +41,24 @@ app.whenReady().then(() => {
   tray.setContextMenu(contextMenu)
   tray.addListener("click", (_e, _r, p) => {
 
-    let bounds = tray?.getBounds();
-    const { x, y } = bounds || p || screen.getCursorScreenPoint() || {};
+    const options = [p, screen.getCursorScreenPoint(), tray?.getBounds()];
 
-    if (x && y) {
-      TrayWindow.get().showInPlace(x, y);
-    } else {
-      TrayWindow.get().show();
+    for (const option of options) {
+      if (
+        typeof option === "object" &&
+        typeof option.x === "number" &&
+        typeof option.y === "number" &&
+        option.x !== 0 &&
+        option.y !== 0 &&
+        option.x >= 0 &&
+        option.y >= 0
+      ) {
+        TrayWindow.get().showInPlace(option.x, option.y);
+        return;
+      }
     }
+
+    TrayWindow.get().show();
   })
 })
 
