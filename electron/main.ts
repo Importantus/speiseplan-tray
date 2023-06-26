@@ -1,4 +1,4 @@
-import { app, Tray, Menu, BrowserWindow, nativeImage } from 'electron'
+import { app, Tray, Menu, BrowserWindow, nativeImage, screen } from 'electron'
 import path from 'node:path'
 
 // The built directory structure
@@ -40,12 +40,15 @@ app.whenReady().then(() => {
   tray.setToolTip('Zeige Speiseplan')
   tray.setContextMenu(contextMenu)
   tray.addListener("click", (_e, _r, p) => {
-    if (tray?.getBounds()) {
-      TrayWindow.get().showInPlace(tray.getBounds().x + 20, tray.getBounds().y + 20)
-    } else if (p.x && p.y) {
-      TrayWindow.get().showInPlace(p.x, p.y)
+
+    let bounds = tray?.getBounds();
+    bounds = undefined
+    const { x, y } = bounds || p || screen.getCursorScreenPoint() || {};
+
+    if (x && y) {
+      TrayWindow.get().showInPlace(x, y);
     } else {
-      TrayWindow.get().show()
+      TrayWindow.get().show();
     }
   })
 })
@@ -99,15 +102,25 @@ class TrayWindow extends BrowserWindow {
       console.log(x, y)
       console.log(this.getSize()[0], this.getSize()[1])
       try {
-        this.setBounds({
-          x: x - this.getSize()[0] / 2,
-          y: y - this.getSize()[1] - 30
-        })
+        this.setBounds(this.calculatePosition(x, y))
       } catch (err) {
         console.log(err)
       }
     }
     super.show()
+  }
+
+  calculatePosition(x: number, y: number) {
+    const windowSize = this.getSize();
+    const screenSize = screen.getDisplayNearestPoint({ x: x, y: y }).workAreaSize;
+
+    let xPosition = Math.max(0, x - windowSize[0] / 2);
+    let yPosition = y > screenSize.height / 2 ? y - windowSize[1] - 30 : y + windowSize[1] + 30;
+
+    xPosition = Math.min(xPosition, screenSize.width - windowSize[0]);
+    yPosition = Math.min(yPosition, screenSize.height - windowSize[1]);
+
+    return { x: xPosition, y: yPosition };
   }
 
   static get() {
