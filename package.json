@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build && electron-builder",
+    "github:build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
