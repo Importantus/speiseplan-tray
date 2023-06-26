@@ -1,6 +1,10 @@
 name: Build/release
 
-on: push
+on:
+  push:
+    tags:
+      - "*" # Push events to every tag not containing /
+  pull_request:
 
 jobs:
   release:
