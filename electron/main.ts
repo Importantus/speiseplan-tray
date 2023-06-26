@@ -125,11 +125,13 @@ class TrayWindow extends BrowserWindow {
     const windowSize = this.getSize();
     const screenSize = screen.getDisplayNearestPoint({ x: x, y: y }).workAreaSize;
 
-    let xPosition = Math.max(0, x - windowSize[0] / 2);
-    let yPosition = y > screenSize.height / 2 ? y - windowSize[1] - 30 : y + windowSize[1] + 30;
+    const offset = 20;
 
-    xPosition = Math.min(xPosition, screenSize.width - windowSize[0]);
-    yPosition = Math.min(yPosition, screenSize.height - windowSize[1]);
+    let xPosition = Math.max(offset, x - windowSize[0] / 2);
+    let yPosition = y > screenSize.height / 2 ? y - windowSize[1] - offset : y + offset;
+
+    xPosition = Math.min(xPosition, screenSize.width - windowSize[0] - offset);
+    yPosition = Math.min(yPosition, screenSize.height - windowSize[1] - offset);
 
     return { x: xPosition, y: yPosition };
   }
