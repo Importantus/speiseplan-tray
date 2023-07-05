@@ -114,6 +114,10 @@ dialog h1 {
     margin-bottom: 6px;
 }
 
+svg {
+    stroke: white;
+}
+
 .close {
     position: absolute;
     top: 12px;
