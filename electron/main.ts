@@ -32,9 +32,9 @@ app.whenReady().then(() => {
   tray = new Tray(icon)
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: "Beenden", role: "quit" },
+    { label: "Zeige Speiseplan", click: () => { TrayWindow.get().show() } },
     { label: "Schließen", click: () => { TrayWindow.get().hide() } },
-    { label: "Zeige Speiseplan", click: () => { TrayWindow.get().show() } }
+    { label: "Beenden", role: "quit" }
   ])
 
   tray.setToolTip('Zeige Speiseplan')
