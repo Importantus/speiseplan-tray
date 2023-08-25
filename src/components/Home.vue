@@ -1,65 +1,62 @@
 <script setup lang="ts">
-import getData, { Speiseplan } from "../lib/API.ts";
 import MealComponent from "./MealComponent.vue";
-import { filterMeals, setDate, state, availableFilters, toggleFilter } from "../lib/filter.ts";
+import { speisePlanStore } from "../lib/store.ts";
+import SettingsPage from "./SettingsPage.vue";
+import { Filter } from "lucide-vue-next";
+import { RefreshCw } from "lucide-vue-next";
+import { ref, watch } from "vue";
 
-let data: Speiseplan = await getData();
 
-async function reload() {
-    data = await getData();
-}
+let store = speisePlanStore();
+
+await store.init();
 
 function incrementDay() {
-    setDate(new Date(state.date.setDate(state.date.getDate() + 1)));
+    store.incrementDate();
 }
 
 function decrementDay() {
-    setDate(new Date(state.date.setDate(state.date.getDate() - 1)));
+    store.decrementDate();
 }
+
+let showSettings = ref(false);
+
+function reload() {
+    store.$reset()
+    store.init();
+}
+
+watch(store.settings, () => {
+    localStorage.setItem('settings', JSON.stringify(store.settings));
+    store.filter()
+}, { deep: true })
 </script>
 
 <template>
-    <div class="wrapper">
-        <dialog>
-            <button class="close" @click="closeDialog">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                </svg>
-            </button>
-            <h1>Filter</h1>
-            <div class="filter-wrapper" v-for="filter in availableFilters" :key="filter.name">
-                <input type="checkbox" @input="() => toggleFilter(filter)" :checked="state.activeFilters.has(filter)"
-                    :id="filter.name" />
-                <label :for="filter.name">{{ filter.name }}</label>
-            </div>
-        </dialog>
+    <SettingsPage v-if="showSettings" @close="showSettings = false" />
+
+    <div v-if="!showSettings" class="wrapper">
         <div class="header">
             <div class="header-text">
                 <h1>Speiseplan</h1>
-                <p>{{ state.date.toLocaleDateString('de-DE', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric'
-                }) }}</p>
+                <p>{{
+                    (store.date.getDate() === new Date().getDate() &&
+                        store.date.getMonth() === new Date().getMonth() &&
+                        store.date.getFullYear() === new Date().getFullYear()
+                        ? 'Heute, ' : '') +
+                    store.date.toLocaleDateString('de-DE', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric'
+                    }) }}</p>
             </div>
             <div class="header-buttons">
-                <button class="header-button" @click="openDialog">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-filter">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                    </svg>
+                <button class="header-button" @click="showSettings = true">
+                    <Filter height="20px" />
                 </button>
                 <button class="header-button" @click="reload">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw">
-                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                        <path d="M3 3v5h5" />
-                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-                        <path d="M16 16h5v5" />
-                    </svg>
+                    <RefreshCw height="20px" />
                 </button>
             </div>
         </div>
@@ -82,8 +79,8 @@ function decrementDay() {
                 </button>
             </div>
             <div class="gradient"></div>
-            <p v-if="filterMeals(data).length === 0">Heute gibt es nichts zu essen</p>
-            <div class="meal-item" v-for="meal in filterMeals(data)" :key="meal.name">
+            <p v-if="store.filteredMeals.length === 0">Heute gibt es nichts zu essen</p>
+            <div class="meal-item" v-for="meal in store.filteredMeals" :key="meal.name">
                 <MealComponent :meal="meal" />
             </div>
 
@@ -91,46 +88,7 @@ function decrementDay() {
     </div>
 </template>
 
-<script lang="ts">
-function openDialog() {
-    const dialog = document.querySelector("dialog");
-    dialog?.showModal();
-}
-
-function closeDialog() {
-    const dialog = document.querySelector("dialog");
-    dialog?.close();
-}
-</script>
-
 <style scoped>
-dialog {
-    position: relative;
-    border: none;
-    border-radius: 10px;
-}
-
-dialog h1 {
-    margin-bottom: 6px;
-}
-
-svg {
-    stroke: white;
-}
-
-.close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 1rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    padding: 5px;
-}
-
 .wrapper {
     padding: 1rem 1rem 0 1rem;
     box-sizing: border-box;
@@ -237,6 +195,9 @@ svg {
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
