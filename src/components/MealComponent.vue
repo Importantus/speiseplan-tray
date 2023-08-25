@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Meal } from '../lib/API.ts';
+import { LocationCodes, Meal, speisePlanStore } from '../lib/store';
+import AllergeneComponent from './AllergeneComponent.vue';
 
+const store = speisePlanStore()
 
 defineProps<{
     meal: Meal;
@@ -12,11 +14,18 @@ defineProps<{
     <div class="meal">
         <div class="icons">
             <p>{{ meal.vegetarian ? "🥬" : "🥩" }}</p>
-            <p v-if="meal.allergens.some((a) => a.code === 'GlW')">🌾</p>
+            <p>{{ meal.location === LocationCodes.Cafeteria ? "☕" : "🍴" }}</p>
         </div>
         <div class="text">
-            <h2>{{ meal.name }}</h2>
-            <p>{{ meal.price }}</p>
+            <h2>{{ meal.name }}
+                <span>
+                    <AllergeneComponent v-if="store.settings.justShowAllergens" v-for="allergene in store.activeFilter.filter((filter) => {
+                        return meal.allergens.some((a) => a.code === filter.code)
+                    })" :allergene="allergene" />
+                </span>
+            </h2>
+            <p>{{ meal.price + " | " + (meal.location === LocationCodes.Mensa ? 'Mensa' :
+                'Cafeteria') }}</p>
         </div>
     </div>
 </template>
