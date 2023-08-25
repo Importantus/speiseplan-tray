@@ -1,7 +1,7 @@
 {
   "name": "speiseplan-tray",
   "private": true,
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "Zeigt den Speiseplan der Mensa und Cafeteria Lübeck im System-Tray an.",
   "author": {
     "name": "Importantus",
