@@ -17,7 +17,7 @@ let store = speisePlanStore();
                 Wo isst du?
             </h2>
             <div class="filter-wrapper one-line">
-                <FilterComponent v-for="filter in store.availableFilter.filter((e) => e.type === FilterType.Location) "
+                <FilterComponent v-for="filter in store.allFilter.filter((e) => e.type === FilterType.Location) "
                     :filter="filter" :key="filter.code" strech />
             </div>
         </div>
@@ -26,8 +26,7 @@ let store = speisePlanStore();
                 Was isst du?
             </h2>
             <div class="filter-wrapper one-line">
-                <FilterComponent
-                    v-for="filter in store.availableFilter.filter((e) => e.type === FilterType.DietaryPreference)"
+                <FilterComponent v-for="filter in store.allFilter.filter((e) => e.type === FilterType.DietaryPreference)"
                     :filter="filter" :key="filter.code" strech />
             </div>
         </div>
@@ -44,7 +43,7 @@ let store = speisePlanStore();
             </div>
 
             <div class="filter-wrapper">
-                <FilterComponent v-for="filter in store.availableFilter.filter((e) => e.type === FilterType.Allergen)"
+                <FilterComponent v-for="filter in store.allFilter.filter((e) => e.type === FilterType.Allergen)"
                     :filter="filter" :key="filter.code" :strech="false" />
             </div>
         </div>

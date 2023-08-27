@@ -68,6 +68,7 @@ export interface Filter {
     name: string;
     type: FilterType;
     code: string;
+    active: boolean;
     icon?: Icon;
 }
 
@@ -87,10 +88,8 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             mensaData: {} as MensaData,
             ort: (localStorage.getItem("ort") || Ort.TH) as Ort,
             date: new Date(),
-            activeFilter: JSON.parse(localStorage.getItem("activeFilter") || "[]") as Filter[],
-            availableFilter: [] as Filter[],
+            allFilter: [] as Filter[],
             filteredMeals: [] as Meal[],
-            firstStart: JSON.parse(localStorage.getItem("firstStart") || "true") as boolean,
             settings: {
                 justShowAllergens: {
                     name: "Allergene nur anzeigen",
@@ -102,15 +101,11 @@ export const speisePlanStore = defineStore("speiseplanStore", {
     },
     actions: {
         async init() {
+            this.ort = Ort.TH
             this.loadSettings();
             await this.loadData();
             this.loadFilter();
             this.filter();
-
-            if (this.firstStart) {
-                this.firstStart = false;
-                localStorage.setItem("firstStart", JSON.stringify(this.firstStart));
-            }
         },
         async loadData() {
             const speiseplan = await this.makeRequest<Speiseplan>(Route.Meals);
@@ -139,13 +134,14 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             }
         },
         loadFilter() {
-            this.availableFilter = [];
+            const availableFilter: Filter[] = [];
 
             this.mensaData.allergens.forEach((allergen) => {
-                this.addFilter({
+                availableFilter.push({
                     name: allergen.name,
                     type: FilterType.Allergen,
-                    code: allergen.code
+                    code: allergen.code,
+                    active: false
                 })
             });
 
@@ -154,48 +150,60 @@ export const speisePlanStore = defineStore("speiseplanStore", {
                     name: "Alles",
                     type: FilterType.DietaryPreference,
                     code: DietaryPreferenceCodes.All,
+                    active: true,
                     icon: Beef
                 },
                 {
                     name: "Vegetarisch",
                     type: FilterType.DietaryPreference,
                     code: DietaryPreferenceCodes.Vegetarian,
+                    active: false,
                     icon: EggFried
                 },
                 {
                     name: "Vegan",
                     type: FilterType.DietaryPreference,
                     code: DietaryPreferenceCodes.Vegan,
+                    active: false,
                     icon: LeafyGreenIcon
                 }
             ]
-            this.addAllFilter(dietaryPreferences);
+            availableFilter.push(...dietaryPreferences);
 
-            if (this.firstStart) {
-                this.activateFilter(dietaryPreferences[0]);
-            }
-
-            if (this.ort === Ort.TH) {
-                const locations = [
-                    {
-                        name: "Mensa",
-                        type: FilterType.Location,
-                        code: LocationCodes.Mensa,
-                        icon: Utensils
-                    },
-                    {
-                        name: "Cafeteria",
-                        type: FilterType.Location,
-                        code: LocationCodes.Cafeteria,
-                        icon: Coffee
-                    }
-                ]
-                this.addAllFilter(locations);
-
-                if (this.firstStart) {
-                    this.activateAllFilter(locations);
+            const locations = [
+                {
+                    name: "Mensa",
+                    type: FilterType.Location,
+                    code: LocationCodes.Mensa,
+                    active: true,
+                    icon: Utensils
+                },
+                {
+                    name: "Cafeteria",
+                    type: FilterType.Location,
+                    code: LocationCodes.Cafeteria,
+                    active: true,
+                    icon: Coffee
                 }
+            ]
+            if (this.ort === Ort.TH) {
+                availableFilter.push(...locations);
+            } else {
+                availableFilter.push(locations[1]);
             }
+
+            const oldFilter = JSON.parse(localStorage.getItem("allFilter") || "[]") as Filter[];
+
+            this.allFilter = availableFilter
+
+            oldFilter.forEach((filter) => {
+                const newFilter = this.allFilter.find((f) => f.code === filter.code)
+                if (newFilter) {
+                    newFilter.active = filter.active;
+                }
+            })
+
+            localStorage.setItem("allFilter", JSON.stringify(this.allFilter));
         },
         async makeRequest<T>(route: Route): Promise<T> {
             const url = `${ENDPOINT}/${route}?mensa=${this.ort}`;
@@ -226,46 +234,6 @@ export const speisePlanStore = defineStore("speiseplanStore", {
 
             this.filteredMeals = filtered;
         },
-        activateFilter(filter: Filter) {
-            if (this.activeFilter.find((f) => f.code === filter.code)) return;
-
-            if (filter.type === FilterType.DietaryPreference) {
-                const indexToRemove = this.activeFilter.findIndex(f => f.type === FilterType.DietaryPreference);
-                if (indexToRemove !== -1) {
-                    this.activeFilter.splice(indexToRemove, 1);
-                }
-            }
-            this.activeFilter.push(filter);
-
-
-            localStorage.setItem("activeFilter", JSON.stringify(this.activeFilter));
-            this.filter()
-        },
-        activateAllFilter(filter: Filter[]) {
-            filter.forEach((f) => this.activateFilter(f));
-        },
-        deactivateFilter(filter: Filter) {
-            this.activeFilter.splice(this.activeFilter.indexOf(filter), 1);
-            localStorage.setItem("activeFilter", JSON.stringify(this.activeFilter));
-            this.filter()
-        },
-        toggleFilter(filter: Filter) {
-            if (this.activeFilter.find((f) => f.code === filter.code)) {
-                this.deactivateFilter(filter);
-            } else {
-                this.activateFilter(filter);
-            }
-        },
-        addFilter(filter: Filter) {
-            if (this.availableFilter.find((f) => f.code === filter.code)) return;
-            this.availableFilter.push(filter);
-        },
-        addAllFilter(filter: Filter[]) {
-            filter.forEach((f) => this.addFilter(f));
-        },
-        removeFilter(filter: Filter) {
-            this.availableFilter.splice(this.availableFilter.indexOf(filter), 1);
-        },
         incrementDate() {
             this.date.setDate(this.date.getDate() + 1);
             this.filter()
@@ -278,6 +246,27 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             this.ort = ort;
             localStorage.setItem("ort", JSON.stringify(this.ort));
             this.init();
+        },
+        toggleOrt() {
+            this.setOrt(this.ort === Ort.TH ? Ort.MH : Ort.TH);
+        },
+        toggleFilter(filter: Filter) {
+            if (filter.type === FilterType.DietaryPreference) {
+                this.allFilter.forEach((f) => {
+                    if (f.type === FilterType.DietaryPreference) {
+                        f.active = false;
+                    }
+                })
+            }
+
+            filter.active = !filter.active;
+            localStorage.setItem("allFilter", JSON.stringify(this.allFilter));
+            this.filter();
+        }
+    },
+    getters: {
+        activeFilter(): Filter[] {
+            return this.allFilter.filter((filter) => filter.active);
         }
     }
 })

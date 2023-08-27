@@ -1,29 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { Filter, speisePlanStore } from '../lib/store';
 
-const store = speisePlanStore();
+const store = speisePlanStore()
 
 const props = defineProps<{
     filter: Filter,
     strech: boolean,
 }>()
-
-let active = ref(store.activeFilter.find((e) => e.code === props.filter.code) !== undefined);
-
-watch(store.activeFilter, () => {
-    active.value = store.activeFilter.find((e) => e.code === props.filter.code) !== undefined;
-})
-
-
-function toggle() {
-    store.toggleFilter(props.filter);
-}
 </script>
 
 <template>
-    <div class="wrapper" @click="toggle"
-        :class="{ 'stretch': props.strech, 'active': active, 'icon-padding': props.filter.icon }">
+    <div class="wrapper" @click="store.toggleFilter(props.filter)"
+        :class="{ 'stretch': props.strech, 'active': $props.filter.active, 'icon-padding': props.filter.icon }">
         <props.filter.icon! v-if="props.filter.icon" class="icon" />
         <div>{{ $props.filter.name }}</div>
     </div>
