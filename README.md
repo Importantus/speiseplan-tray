@@ -1,13 +1,16 @@
 # Speiseplan Tray
-This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh). It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
-It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/).
+This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh) for the Mensa in Lübeck's university district. It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
+It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/) and is inspired by [this widget](https://github.com/lomenzel/mensa) for KDE Plasma.
 
-![Speiseplan](public/screenshot.png)
+![Speiseplan](/srceenshots.png)
 
 ## Features
-- 💻 Tray application for Windows and Linux
-- 📅 Shows the menus for the current and next week
-- 🥬 Lets you filter for vegetarian and vegan dishes
+- 📅 View menus for current and next week 
+- 🥦 Filter by vegan and vegetarian dishes 
+- 🚫 Exclude dishes containing specific allergens 
+- ❗ Show allergens without filtering dishes 
+- 🌮 Display dishes from Mensa and Cafeteria 
+- 🌍 Available for Linux and Windows 
 ## Local Setup
 The following steps will get you up and running with a local development environment. We assume you have Node.js and npm installed:
 
