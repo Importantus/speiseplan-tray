@@ -136,6 +136,9 @@ export const speisePlanStore = defineStore("speiseplanStore", {
         loadFilter() {
             const availableFilter: Filter[] = [];
 
+            // Sort allergens by name
+            this.mensaData.allergens.sort((a, b) => a.name.localeCompare(b.name));
+
             this.mensaData.allergens.forEach((allergen) => {
                 availableFilter.push({
                     name: allergen.name,
