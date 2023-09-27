@@ -1,5 +1,5 @@
 # Speiseplan Tray
-This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh) for the Mensa in Lübeck's university district. It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
+This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh) for the Mensa in Lübeck's university district. It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Tauri](https://tauri.app/) to run as a tray application. \
 It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/) and is inspired by [this widget](https://github.com/lomenzel/mensa) for KDE Plasma.
 
 ![Speiseplan](/srceenshots.png)
@@ -12,7 +12,7 @@ It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/) an
 - 🌮 Display dishes from Mensa and Cafeteria 
 - 🌍 Available for Linux and Windows 
 ## Local Setup
-The following steps will get you up and running with a local development environment. We assume you have Node.js and npm installed:
+The following steps will get you up and running with a local development environment. We assume you have Node.js, npm and Rust installed:
 
 1. Clone the repo with 
 ```bash
@@ -25,13 +25,12 @@ npm install
 ```
 3. Start the local development server
 ```bash
-npm run dev
+npm run tauri dev
 ```
 4. Install and use [gitmoji](#gitmoji) to commit
 
 ### Build
-Run `npm run build` to build the app for production. The build artifacts will be stored in the `release/` directory.  
-However, the build process is configured to run on GitHub Actions and will automatically create a release draft with the build artifacts, so you don't need to run this command yourself. For more information, see [Release](#release).
+The build process is configured to run on GitHub Actions and will automatically create a release draft with the build artifacts, so you don't need to run it yourself. For more information, see [Release](#release).
 
 ### Gitmoji
 
