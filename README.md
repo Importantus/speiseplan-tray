@@ -1,6 +1,6 @@
 # Speiseplan Tray
 This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh) for the Mensa in Lübeck's university district. It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
-It builds on top of this [Speiseplan API](https://speiseplan.mcloud.digital/) and is inspired by [this widget](https://github.com/lomenzel/mensa) for KDE Plasma.
+It builds on top of this [Speiseplan API](https://github.com/Draculente/mensa-api) and is inspired by [this widget](https://github.com/lomenzel/mensa) for KDE Plasma.
 
 ![Speiseplan](/srceenshots.png)
 
@@ -75,6 +75,11 @@ When you want to create a new release, follow these steps:
 1. Edit and publish the release draft created by the workflow in GitHub
 
 After building successfully, the action will publish the release artifacts in a new release draft that will be created on GitHub with download links for the app. 
+
+## Similar projects
+- [Android Widget](https://github.com/hoppjan/LuebeckMensaWidget) (Android)
+- [KDE Plasma Widget](https://github.com/lomenzel/mensa) (Linux with KDE Plasma)
+
 ## Known Issues
 On some Linux distributions, the positioning of the window is not correct. This can be due to the window manager and/or the used display protocol. If you encounter this issue, please open an issue and provide information about your distribution and window manager.  
 With some versions of Windows 10, the same error can occur. Contributions are welcome.
