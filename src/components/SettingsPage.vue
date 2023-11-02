@@ -32,6 +32,15 @@ let store = speisePlanStore();
         </div>
         <div class="outer-filter-wrapper">
             <h2 class="filter-heading">
+                Was bist du?
+            </h2>
+            <div class="filter-wrapper one-line">
+                <FilterComponent v-for="filter in store.allFilter.filter((e) => e.type === FilterType.Group)"
+                    :filter="filter" :key="filter.code" strech />
+            </div>
+        </div>
+        <div class="outer-filter-wrapper">
+            <h2 class="filter-heading">
                 Wogegen bist du allergisch?
             </h2>
             <div class="switch-wrapper">

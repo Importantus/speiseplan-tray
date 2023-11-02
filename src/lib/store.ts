@@ -19,7 +19,20 @@ export interface Meal {
     vegetarian: boolean;
     vegan: boolean;
     location: LocationCodes;
+    priceByGroup: PriceByGroup;
     allergens: Allergene[];
+}
+
+export interface PriceByGroup {
+    [Group.Students]: number;
+    [Group.Employees]: number;
+    [Group.Guests]: number;
+}
+
+export enum Group {
+    Students = "students",
+    Employees = "employees",
+    Guests = "guests"
 }
 
 export interface Day {
@@ -57,7 +70,8 @@ export enum Route {
 export enum FilterType {
     DietaryPreference,
     Location,
-    Allergen
+    Allergen,
+    Group
 }
 
 export enum DietaryPreferenceCodes {
@@ -74,7 +88,7 @@ export enum LocationCodes {
 export interface Filter {
     name: string;
     type: FilterType;
-    code: string;
+    code: DietaryPreference | Group;
     active: boolean;
     icon?: Icon;
 }
@@ -212,6 +226,29 @@ export const speisePlanStore = defineStore("speiseplanStore", {
                 availableFilter.push(locations[1]);
             }
 
+            const groups = [
+                {
+                    name: "Studi",
+                    type: FilterType.Group,
+                    code: Group.Students,
+                    active: true
+                },
+                {
+                    name: "Mitarbeiti",
+                    type: FilterType.Group,
+                    code: Group.Employees,
+                    active: false
+                },
+                {
+                    name: "Gasti",
+                    type: FilterType.Group,
+                    code: Group.Guests,
+                    active: false
+                }
+            ]
+
+            availableFilter.push(...groups);
+
             const oldFilter = JSON.parse(localStorage.getItem("allFilter") || "[]") as Filter[];
 
             this.allFilter = availableFilter
@@ -279,10 +316,18 @@ export const speisePlanStore = defineStore("speiseplanStore", {
                 })
             }
 
+            if (filter.type === FilterType.Group) {
+                this.allFilter.forEach((f) => {
+                    if (f.type === FilterType.Group) {
+                        f.active = false;
+                    }
+                })
+            }
+
             filter.active = !filter.active;
             localStorage.setItem("allFilter", JSON.stringify(this.allFilter));
             this.filter();
-        }
+        },
     },
     getters: {
         activeFilter(): Filter[] {

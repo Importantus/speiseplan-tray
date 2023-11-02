@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LocationCodes, Meal, speisePlanStore } from '../lib/store';
+import { LocationCodes, Meal, speisePlanStore, FilterType, Group } from '../lib/store';
 import AllergeneComponent from './AllergeneComponent.vue';
 
 const store = speisePlanStore()
@@ -24,8 +24,13 @@ defineProps<{
                     })" :allergene="allergene" />
                 </span>
             </h2>
-            <p>{{ meal.price + " | " + (meal.location === LocationCodes.Mensa ? 'Mensa' :
-                'Cafeteria') }}</p>
+            <p>{{ meal.priceByGroup[store.activeFilter.filter((e) => e.type === FilterType.Group)[0].code as
+                Group].toLocaleString('de-DE', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 2
+                }) + " | " + (meal.location === LocationCodes.Mensa ? 'Mensa' :
+                    'Cafeteria') }}</p>
         </div>
     </div>
 </template>
