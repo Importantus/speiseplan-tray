@@ -83,12 +83,23 @@ watch(store.settings, () => {
             <div class="meal-item" v-for="meal in store.filteredMeals" :key="meal.name">
                 <MealComponent :meal="meal" />
             </div>
-
+            <p class="last-update">Letztes Update {{ store.mensaData.speiseplan.lastUpdate.toLocaleString() }}</p>
         </div>
     </div>
 </template>
 
 <style scoped>
+.last-update {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    z-index: 10;
+    font-size: 10px;
+    opacity: 0.5;
+    position: sticky;
+    top: 100vh;
+}
+
 .wrapper {
     padding: 1rem 1rem 0 1rem;
     box-sizing: border-box;
@@ -102,7 +113,7 @@ watch(store.settings, () => {
     height: 260px;
     box-sizing: border-box;
     overflow-y: scroll;
-    padding-bottom: 5rem;
+    /* padding-bottom: 3rem; */
     display: flex;
     flex-direction: column;
     gap: 1.3rem;
