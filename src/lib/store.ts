@@ -30,7 +30,12 @@ export interface Day {
     meals: Meal[];
 }
 
-export type Speiseplan = Day[];
+export interface Speiseplan {
+    lastUpdate: Date;
+    days: Days;
+}
+
+export type Days = Day[];
 
 export interface MensaData {
     speiseplan: Speiseplan;
@@ -44,7 +49,9 @@ export enum Ort {
 
 export enum Route {
     Meals = "meals",
-    Allergens = "allergens"
+    Allergens = "allergens",
+    MealsUpdate = "meals/last-update",
+    AllergensUpdate = "allergens/last-update"
 }
 
 export enum FilterType {
@@ -82,6 +89,10 @@ export interface Settings {
     [key: string]: Setting
 }
 
+export interface LastUpdate {
+    lastUpdate: Date;
+}
+
 export const speisePlanStore = defineStore("speiseplanStore", {
     state: () => {
         return {
@@ -108,13 +119,19 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             this.filter();
         },
         async loadData() {
-            const speiseplan = await this.makeRequest<Speiseplan>(Route.Meals);
+            const days = await this.makeRequest<Days>(Route.Meals);
             const allergens = await this.makeRequest<Allergene[]>(Route.Allergens);
+            const mealsLastUpdate = await this.makeRequest<LastUpdate>(Route.MealsUpdate);
 
             // Make sure the date is a Date object.
-            speiseplan.forEach((day) => {
+            days.forEach((day) => {
                 day.date = new Date(day.date);
             });
+
+            const speiseplan: Speiseplan = {
+                lastUpdate: new Date(mealsLastUpdate.lastUpdate),
+                days
+            }
 
             this.mensaData = {
                 speiseplan,
@@ -214,7 +231,7 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             return await response.json() as T;
         },
         filter() {
-            const meals = this.mensaData.speiseplan.find((day) => day.date.getDate() === this.date.getDate())?.meals ?? [];
+            const meals = this.mensaData.speiseplan.days.find((day) => day.date.getDate() === this.date.getDate())?.meals ?? [];
 
             const filtered = meals.filter((meal) => {
                 let location = false;
