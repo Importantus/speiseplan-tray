@@ -88,7 +88,7 @@ export enum LocationCodes {
 export interface Filter {
     name: string;
     type: FilterType;
-    code: DietaryPreference | Group;
+    code: string;
     active: boolean;
     icon?: Icon;
 }
