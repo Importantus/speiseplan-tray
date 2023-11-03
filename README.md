@@ -2,7 +2,7 @@
 This is a small tray application for the [Speiseplan](https://studentenwerk.sh/de/mensen-in-luebeck?ort=3&mensa=8#mensaplan) of the [Studierendenwerk Schleswig Holstein](https://studentenwerk.sh) for the Mensa in Lübeck's university district. It is written in [TypeScript](https://www.typescriptlang.org/) and [Vue.js](https://vuejs.org/) and uses [Electron](https://www.electronjs.org/) to run as a tray application. \
 It builds on top of this [Speiseplan API](https://github.com/Draculente/mensa-api) and is inspired by [this widget](https://github.com/lomenzel/mensa) for KDE Plasma.
 
-![Speiseplan](/srceenshots.png)
+![Speiseplan](/assets/Screenshot-V0.6.6.png)
 
 ## Features
 - 📅 View menus for current and next week 
