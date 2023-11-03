@@ -65,6 +65,7 @@ app.whenReady().then(() => {
 
 class TrayWindow extends BrowserWindow {
   private static instance: TrayWindow | null = null;
+  private lastOpened: Date = new Date();
 
   private constructor() {
     super({
@@ -87,23 +88,29 @@ class TrayWindow extends BrowserWindow {
       TrayWindow.instance = null
     })
 
+    // If the window is last opened yesterday, reload the page.
+    this.addListener("show", () => {
+      this.lastOpened = new Date()
+      if (this.lastOpened.getDate() !== new Date().getDate()) {
+        this.loadSite()
+      }
+    })
+
     this.addListener("blur", () => {
       if (process.platform !== "linux") this.hide()
     })
 
-    // Test active push message to Renderer-process.
-    this.webContents.on('did-finish-load', () => {
-      this?.webContents.send('main-process-message', (new Date).toLocaleString())
-    })
+    this.loadSite()
+    // this.webContents.openDevTools()
+  }
 
+  loadSite() {
     if (VITE_DEV_SERVER_URL) {
       this.loadURL(VITE_DEV_SERVER_URL)
     } else {
       // this.loadFile('dist/index.html')
       this.loadFile(path.join(process.env.DIST, 'index.html'))
     }
-
-    // this.webContents.openDevTools()
   }
 
   showInPlace(x: number, y: number) {
