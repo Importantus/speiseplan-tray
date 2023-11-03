@@ -13,7 +13,7 @@ defineProps<{
 <template>
     <div class="meal">
         <div class="icons">
-            <p>{{ meal.vegetarian ? "🥬" : "🥩" }}</p>
+            <p>{{ meal.vegan ? "🌻" : meal.vegetarian ? "🌽" : "🥩" }}</p>
             <p>{{ meal.location === LocationCodes.Cafeteria ? "☕" : "🍴" }}</p>
         </div>
         <div class="text">
