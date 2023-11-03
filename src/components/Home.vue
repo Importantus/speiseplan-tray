@@ -22,6 +22,7 @@ function decrementDay() {
 let showSettings = ref(false);
 
 function reload() {
+    console.log("reload")
     store.$reset()
     store.init();
 }
@@ -83,7 +84,8 @@ watch(store.settings, () => {
             <div class="meal-item" v-for="meal in store.filteredMeals" :key="meal.name">
                 <MealComponent :meal="meal" />
             </div>
-            <p class="last-update">Letztes Update {{ store.mensaData.speiseplan.lastUpdate.toLocaleString() }}</p>
+            <p v-if="store.mensaData.speiseplan" class="last-update">Letztes Update {{
+                store.mensaData.speiseplan.lastUpdate.toLocaleString() }}</p>
         </div>
     </div>
 </template>
