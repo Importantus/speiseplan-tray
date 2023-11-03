@@ -95,7 +95,7 @@ watch(store.settings, () => {
     margin-top: 10px;
     z-index: 10;
     font-size: 10px;
-    opacity: 0.5;
+    opacity: 0.7;
     position: sticky;
     top: 100vh;
 }
@@ -129,7 +129,7 @@ watch(store.settings, () => {
     left: 0;
     right: 0;
     height: 5rem;
-    background: linear-gradient(180deg, rgba(23, 25, 23, 0) 0%, #171917 74.36%);
+    background: linear-gradient(180deg, var(--color-background-transparent) 0%, var(--color-background) 74.36%);
     z-index: 10;
 }
 
@@ -138,12 +138,11 @@ watch(store.settings, () => {
     top: var(--header-height);
     bottom: 0;
     width: 60px;
-    background-color: rgba(23, 25, 23, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .change-day:hover {
@@ -161,7 +160,7 @@ watch(store.settings, () => {
 .change-day button {
     width: 30px;
     height: 30px;
-    background: black;
+    background: var(--color-card-background);
     border: none;
     cursor: pointer;
     padding: 5px;

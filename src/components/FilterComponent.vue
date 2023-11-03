@@ -22,7 +22,7 @@ const props = defineProps<{
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: #303430;
+    background-color: var(--color-card-background);
     padding: 0.3rem 0.5rem;
     border-radius: 5px;
     font-size: 0.8rem;
@@ -46,6 +46,6 @@ const props = defineProps<{
 }
 
 .active {
-    background-color: #4B674B;
+    background-color: var(--accent-color);
 }
 </style>

@@ -90,7 +90,7 @@ let store = speisePlanStore();
 }
 
 .slider {
-    background-color: #262926;
+    background-color: var(--color-card-background);
     border: none;
     border-radius: 20px;
     bottom: 0;
@@ -108,7 +108,7 @@ let store = speisePlanStore();
 }
 
 .slider:before {
-    background-color: #181a18;
+    background-color: var(--accent-color-tuned);
     border-radius: 50%;
     content: "";
     height: var(--height);
@@ -116,11 +116,11 @@ let store = speisePlanStore();
 }
 
 input:checked+.slider {
-    background-color: #303430
+    background-color: var(--color-card-background)
 }
 
 input:checked+.slider:before {
-    background-color: #4B674B;
+    background-color: var(--accent-color);
     -webkit-transform: translateX(calc(var(--width) - var(--height)));
     -ms-transform: translateX(calc(var(--width) - var(--height)));
     transform: translateX(calc(var(--width) - var(--height)))
@@ -173,6 +173,5 @@ input:checked+.slider:before {
     margin-bottom: 0.5rem;
     font-size: 1rem;
     font-weight: 500;
-    color: #fff;
 }
 </style>

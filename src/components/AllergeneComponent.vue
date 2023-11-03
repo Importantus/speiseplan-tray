@@ -13,7 +13,7 @@ const props = defineProps<{
 
 <style scoped>
 span {
-    background-color: #303430;
+    background-color: var(--color-card-background);
     padding: 0.1rem 0.25rem;
     border-radius: 5px;
     font-size: 0.65rem;

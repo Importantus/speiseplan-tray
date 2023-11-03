@@ -3,8 +3,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color-scheme: dark;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,7 +12,32 @@
   -webkit-text-size-adjust: 100%;
 
   --color-background: #171917;
+  --color-background-transparent: rgba(23, 25, 23, 0);
+  --color-background-half-transparent: rgba(23, 25, 23, 0.5);
+  --color-card-background: #303430;
+  --accent-color: #4B674B;
+  --accent-color-tuned: #374137;
+  --color-text-primary: rgba(255, 255, 255, 0.87);
+  --color-text-secondary: #B4B4B4;
 }
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --color-background: #e8eee8;
+    --color-background-transparent: rgba(239, 247, 239, 0);
+    --color-background-half-transparent: rgba(239, 247, 239, 0.5);
+    --color-card-background: #c8d6c8;
+    --accent-color: #6f9c6f;
+    --accent-color-tuned: #aac4aa;
+    --color-text-primary: rgba(0, 0, 0, 0.87);
+    --color-text-secondary: #191919;
+
+    color: var(--color-text-primary)
+  }
+}
+
 
 a {
   font-weight: 500;
@@ -30,6 +54,7 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: var(--color-background);
+  color: var(--color-text-primary)
 }
 
 h1 {
@@ -46,7 +71,7 @@ h2 {
 }
 
 p {
-  color: #B4B4B4;
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   font-weight: 300;
   margin: 0;
