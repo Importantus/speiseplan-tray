@@ -10,6 +10,7 @@ It builds on top of this [Speiseplan API](https://github.com/Draculente/mensa-ap
 - 🚫 Exclude dishes containing specific allergens 
 - ❗ Show allergens without filtering dishes 
 - 🌮 Display dishes from Mensa and Cafeteria 
+- 🌒 Light and dark mode
 - 🌍 Available for Linux, Windows and MacOS 
 
 ## Local Setup
