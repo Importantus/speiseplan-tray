@@ -10,7 +10,8 @@ It builds on top of this [Speiseplan API](https://github.com/Draculente/mensa-ap
 - 🚫 Exclude dishes containing specific allergens 
 - ❗ Show allergens without filtering dishes 
 - 🌮 Display dishes from Mensa and Cafeteria 
-- 🌍 Available for Linux and Windows 
+- 🌍 Available for Linux, Windows and MacOS 
+
 ## Local Setup
 The following steps will get you up and running with a local development environment. We assume you have Node.js and npm installed:
 
