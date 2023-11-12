@@ -39,4 +39,28 @@
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
   },
+  mac: {
+    icon: "public/icon.png",
+    target: ["dmg"],
+    artifactName: "${productName}_${version}.${ext}",
+  },
+  dmg: {
+    contents: [
+      {
+        x: 255,
+        y: 85,
+        type: "file",
+      },
+      {
+        x: 253,
+        y: 325,
+        type: "link",
+        path: "/Applications",
+      },
+    ],
+    window: {
+      width: 500,
+      height: 500,
+    },
+  },
 }
