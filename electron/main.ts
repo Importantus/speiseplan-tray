@@ -22,12 +22,20 @@ app.on('window-all-closed', () => {
   console.log('window-all-closed')
 })
 
+app.on("did-resign-active", () => {
+    TrayWindow.get().hide()
+});
+
 app.setLoginItemSettings({
   openAtLogin: true,
 })
 
+const platform = process.platform;
+const isMac = platform === 'darwin'
+const isWindows = platform === 'win32'
+
 app.whenReady().then(() => {
-  const iconFile = process.platform === "win32" ? 'icon.ico' : 'icon.png';
+  const iconFile = isWindows ? 'icon.ico' : isMac ? 'forkKnifeTemplate.png' : 'icon.png';
   const icon = nativeImage.createFromPath(path.join(process.env.PUBLIC, iconFile))
   tray = new Tray(icon)
 
@@ -38,7 +46,17 @@ app.whenReady().then(() => {
   ])
 
   tray.setToolTip('Zeige Speiseplan')
-  tray.setContextMenu(contextMenu)
+
+  if (isMac) {
+    app.dock.hide()
+    tray.on("right-click", () => {
+        tray?.popUpContextMenu(contextMenu)
+    })
+
+  } else {
+    tray.setContextMenu(contextMenu)
+  }
+
   tray.addListener("click", (_e, _r, p) => {
 
     const options = [p, screen.getCursorScreenPoint(), tray?.getBounds()];
@@ -53,7 +71,13 @@ app.whenReady().then(() => {
         option.x >= 0 &&
         option.y >= 0
       ) {
-        TrayWindow.get().showInPlace(option.x, option.y);
+        let x = option.x;
+        let y = option.y;
+        if (isMac) {
+            x = p.x;
+            y = p.y;
+        }
+        TrayWindow.get().showInPlace(x, y);
         return;
       }
     }
@@ -97,7 +121,7 @@ class TrayWindow extends BrowserWindow {
     })
 
     this.addListener("blur", () => {
-      if (process.platform !== "linux") this.hide()
+      if (isWindows) this.hide()
     })
 
     this.loadSite()
@@ -129,10 +153,14 @@ class TrayWindow extends BrowserWindow {
   }
 
   calculatePosition(x: number, y: number) {
+    const offset = 20;
+
+    if(isMac) {
+        return { x: y - offset * 2, y: x }
+    }
+
     const windowSize = this.getSize();
     const screenSize = screen.getDisplayNearestPoint({ x: x, y: y }).workAreaSize;
-
-    const offset = 20;
 
     let xPosition = Math.max(offset, x - windowSize[0] / 2);
     let yPosition = y > screenSize.height / 2 ? y - windowSize[1] - offset : y + offset;

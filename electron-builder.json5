@@ -30,6 +30,11 @@
     target: ["AppImage", "deb"],
     artifactName: "${productName}_${version}.${ext}",
   },
+  mac: {
+    icon: "public/icon-512.png",
+    target: ["dmg"],
+    artifactName: "${productName}_${version}.${ext}",
+  },
   deb: {
     priority: "optional",
   },
@@ -38,5 +43,24 @@
     perMachine: false,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: false,
+  },
+  dmg: {
+    contents: [
+      {
+        x: 255,
+        y: 85,
+        type: "file",
+      },
+      {
+        x: 253,
+        y: 325,
+        type: "link",
+        path: "/Applications",
+      },
+    ],
+    window: {
+      width: 500,
+      height: 500,
+    },
   },
 }
