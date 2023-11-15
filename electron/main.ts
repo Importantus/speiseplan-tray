@@ -35,7 +35,7 @@ const isMac = platform === 'darwin'
 const isWindows = platform === 'win32'
 
 app.whenReady().then(() => {
-  const iconFile = isWindows ? 'icon.ico' : isMac ? 'forkKnifeTemplate.png' : 'icon.png';
+  const iconFile = isWindows ? 'icon.ico' : isMac ? 'IconTemplate.png' : 'icon.png';
   const icon = nativeImage.createFromPath(path.join(process.env.PUBLIC, iconFile))
   tray = new Tray(icon)
 
