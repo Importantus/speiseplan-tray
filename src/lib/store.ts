@@ -1,7 +1,7 @@
 import { Icon, LeafyGreenIcon, EggFried, Beef, Utensils, Coffee } from 'lucide-vue-next';
 import { defineStore } from 'pinia';
 
-const ENDPOINT = "https://speiseplan.mcloud.digital";
+const ENDPOINT = "https://speiseplan.mcloud.digital/v2";
 
 export enum Week {
     Current = "current",
@@ -13,14 +13,27 @@ export interface Allergene {
     name: string;
 }
 
+interface AllergeneRequest {
+    last_updated: Date;
+    data: Allergene[];
+}
+
+interface MealRequest {
+    last_updated: Date,
+    data: Meal[]
+}
+
 export interface Meal {
     name: string;
-    price: string;
     vegetarian: boolean;
     vegan: boolean;
-    location: LocationCodes;
-    priceByGroup: PriceByGroup;
+    location: {
+        code: LocationCodes,
+        name: string
+    };
+    price: PriceByGroup;
     allergens: Allergene[];
+    date: Date;
 }
 
 export interface PriceByGroup {
@@ -35,12 +48,17 @@ export enum Group {
     Guests = "guests"
 }
 
+// export interface Day {
+//     date: Date;
+//     week: Week;
+//     open: boolean;
+//     hasError: string;
+//     meals: Meal[];
+// }
+
 export interface Day {
     date: Date;
-    week: Week;
-    open: boolean;
-    hasError: string;
-    meals: Meal[];
+    meals: Meal[]
 }
 
 export interface Speiseplan {
@@ -56,15 +74,13 @@ export interface MensaData {
 }
 
 export enum Ort {
-    TH = "th",
-    MH = "mh",
+    TH = "ME,CA",
+    MH = "MH"
 }
 
 export enum Route {
     Meals = "meals",
-    Allergens = "allergens",
-    MealsUpdate = "meals/last-update",
-    AllergensUpdate = "allergens/last-update"
+    Allergens = "allergenes"
 }
 
 export enum FilterType {
@@ -81,8 +97,9 @@ export enum DietaryPreferenceCodes {
 }
 
 export enum LocationCodes {
-    Mensa = "Mensa",
-    Cafeteria = "Cafeteria"
+    Mensa = "ME",
+    Cafeteria = "CA",
+    Musikhochschule = "MH"
 }
 
 export interface Filter {
@@ -133,9 +150,21 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             this.filter();
         },
         async loadData() {
-            const days = await this.makeRequest<Days>(Route.Meals);
-            const allergens = await this.makeRequest<Allergene[]>(Route.Allergens);
-            const mealsLastUpdate = await this.makeRequest<LastUpdate>(Route.MealsUpdate);
+            const meals = await this.makeRequest<MealRequest>(Route.Meals);
+            const allergens = await this.makeRequest<AllergeneRequest>(Route.Allergens);
+
+            meals.data.forEach(m => {
+                m.date = new Date(m.date)
+            })
+
+            const days = meals.data.reduce((a: Days, m: Meal) => {
+                const day = a.find((d) => d.date.getDate() === m.date.getDate() && d.date.getMonth() === m.date.getMonth() && d.date.getFullYear() === m.date.getFullYear()) || { date: m.date, meals: [] };
+                day.meals.push(m);
+                a.push(day);
+                return a;
+            }, [] as Days)
+
+            console.log(days)
 
             // Make sure the date is a Date object.
             days.forEach((day) => {
@@ -143,13 +172,13 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             });
 
             const speiseplan: Speiseplan = {
-                lastUpdate: new Date(mealsLastUpdate.lastUpdate),
+                lastUpdate: new Date(meals.last_updated),
                 days
             }
 
             this.mensaData = {
                 speiseplan,
-                allergens
+                allergens: allergens.data
             };
         },
         loadSettings() {
@@ -263,7 +292,7 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             localStorage.setItem("allFilter", JSON.stringify(this.allFilter));
         },
         async makeRequest<T>(route: Route): Promise<T> {
-            const url = `${ENDPOINT}/${route}?mensa=${this.ort}`;
+            const url = `${ENDPOINT}/${route}?location=${this.ort}`;
             const response = await fetch(url);
             return await response.json() as T;
         },
@@ -276,7 +305,7 @@ export const speisePlanStore = defineStore("speiseplanStore", {
                 let allergen = false;
 
                 const locations = this.activeFilter.filter((filter) => filter.type === FilterType.Location)
-                if (locations.filter((e) => e.code === meal.location).length > 0) location = true;
+                if (locations.filter((e) => e.code === meal.location.code).length > 0) location = true;
 
                 const dietaryPreferences = this.activeFilter.filter((filter) => filter.type === FilterType.DietaryPreference)
                 if (dietaryPreferences.filter((e) => meal.vegetarian && e.code === DietaryPreferenceCodes.Vegetarian || meal.vegan && e.code === DietaryPreferenceCodes.Vegan || e.code === DietaryPreferenceCodes.All).length > 0) dietaryPreference = true;
