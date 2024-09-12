@@ -164,8 +164,6 @@ export const speisePlanStore = defineStore("speiseplanStore", {
                 return a;
             }, [] as Days)
 
-            console.log(days)
-
             // Make sure the date is a Date object.
             days.forEach((day) => {
                 day.date = new Date(day.date);
