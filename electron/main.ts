@@ -125,7 +125,7 @@ class TrayWindow extends BrowserWindow {
     })
 
     this.loadSite()
-    this.webContents.openDevTools()
+    // this.webContents.openDevTools()
   }
 
   loadSite() {
