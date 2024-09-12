@@ -97,9 +97,9 @@ export enum DietaryPreferenceCodes {
 }
 
 export enum LocationCodes {
-    Mensa = "ME",
-    Cafeteria = "CA",
-    Musikhochschule = "MH"
+    Mensa = "HL_ME",
+    Cafeteria = "HL_CA",
+    Musikhochschule = "HL_MH"
 }
 
 export interface Filter {
