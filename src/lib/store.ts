@@ -74,8 +74,8 @@ export interface MensaData {
 }
 
 export enum Ort {
-    TH = "ME,CA",
-    MH = "MH"
+    TH = "HL_ME,HL_CA",
+    MH = "HL_MH"
 }
 
 export enum Route {
