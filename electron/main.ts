@@ -23,7 +23,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on("did-resign-active", () => {
-    TrayWindow.get().hide()
+  TrayWindow.get().hide()
 });
 
 app.setLoginItemSettings({
@@ -50,7 +50,7 @@ app.whenReady().then(() => {
   if (isMac) {
     app.dock.hide()
     tray.on("right-click", () => {
-        tray?.popUpContextMenu(contextMenu)
+      tray?.popUpContextMenu(contextMenu)
     })
 
   } else {
@@ -74,8 +74,8 @@ app.whenReady().then(() => {
         let x = option.x;
         let y = option.y;
         if (isMac) {
-            x = p.x;
-            y = p.y;
+          x = p.x;
+          y = p.y;
         }
         TrayWindow.get().showInPlace(x, y);
         return;
@@ -125,7 +125,7 @@ class TrayWindow extends BrowserWindow {
     })
 
     this.loadSite()
-    // this.webContents.openDevTools()
+    this.webContents.openDevTools()
   }
 
   loadSite() {
@@ -155,8 +155,8 @@ class TrayWindow extends BrowserWindow {
   calculatePosition(x: number, y: number) {
     const offset = 20;
 
-    if(isMac) {
-        return { x: y - offset * 2, y: x }
+    if (isMac) {
+      return { x: y - offset * 2, y: x }
     }
 
     const windowSize = this.getSize();

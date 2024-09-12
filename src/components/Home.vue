@@ -41,16 +41,16 @@ watch(store.settings, () => {
             <div class="header-text">
                 <h1>Speiseplan</h1>
                 <p>{{
-                    (store.date.getDate() === new Date().getDate() &&
-                        store.date.getMonth() === new Date().getMonth() &&
-                        store.date.getFullYear() === new Date().getFullYear()
-                        ? 'Heute, ' : '') +
-                    store.date.toLocaleDateString('de-DE', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'numeric',
-                        day: 'numeric'
-                    }) }}</p>
+        (store.date.getDate() === new Date().getDate() &&
+            store.date.getMonth() === new Date().getMonth() &&
+            store.date.getFullYear() === new Date().getFullYear()
+            ? 'Heute, ' : '') +
+        store.date.toLocaleDateString('de-DE', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+        }) }}</p>
             </div>
             <div class="header-buttons">
                 <button class="header-button" @click="showSettings = true">
@@ -66,7 +66,8 @@ watch(store.settings, () => {
             <div class="change-day left" @click="decrementDay">
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left">
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-left">
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
                 </button>
@@ -74,7 +75,8 @@ watch(store.settings, () => {
             <div class="change-day right" @click="incrementDay">
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right">
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-right">
                         <polyline points="9 18 15 12 9 6" />
                     </svg>
                 </button>
@@ -84,8 +86,8 @@ watch(store.settings, () => {
             <div class="meal-item" v-for="meal in store.filteredMeals" :key="meal.name">
                 <MealComponent :meal="meal" />
             </div>
-            <p v-if="store.mensaData.speiseplan" class="last-update">Letztes Update {{
-                store.mensaData.speiseplan.lastUpdate.toLocaleString() }}</p>
+            <p v-if="store.mealPlan" class="last-update">Letztes Update {{
+                store.mealPlan.lastUpdate ? store.mealPlan.lastUpdate.toLocaleString() : "" }}</p>
         </div>
     </div>
 </template>
@@ -118,7 +120,7 @@ watch(store.settings, () => {
     /* padding-bottom: 3rem; */
     display: flex;
     flex-direction: column;
-    gap: 1.3rem;
+    gap: 0.7rem;
 }
 
 ::-webkit-scrollbar {

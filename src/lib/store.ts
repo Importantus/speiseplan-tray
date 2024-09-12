@@ -8,9 +8,9 @@ export enum Week {
     Next = "next"
 }
 
-export interface Allergene {
-    code: string;
-    name: string;
+interface LocationRequest {
+    last_updated: Date;
+    data: Location[]
 }
 
 interface AllergeneRequest {
@@ -27,13 +27,21 @@ export interface Meal {
     name: string;
     vegetarian: boolean;
     vegan: boolean;
-    location: {
-        code: LocationCodes,
-        name: string
-    };
+    location: Location;
     price: PriceByGroup;
     allergens: Allergene[];
     date: Date;
+}
+
+export interface Allergene {
+    code: string;
+    name: string;
+}
+
+export interface Location {
+    code: string;
+    city: string;
+    name: string;
 }
 
 export interface PriceByGroup {
@@ -47,14 +55,6 @@ export enum Group {
     Employees = "employees",
     Guests = "guests"
 }
-
-// export interface Day {
-//     date: Date;
-//     week: Week;
-//     open: boolean;
-//     hasError: string;
-//     meals: Meal[];
-// }
 
 export interface Day {
     date: Date;
@@ -73,14 +73,10 @@ export interface MensaData {
     allergens: Allergene[];
 }
 
-export enum Ort {
-    TH = "HL_ME,HL_CA",
-    MH = "HL_MH"
-}
-
 export enum Route {
     Meals = "meals",
-    Allergens = "allergenes"
+    Allergens = "allergenes",
+    Locations = "locations"
 }
 
 export enum FilterType {
@@ -94,12 +90,6 @@ export enum DietaryPreferenceCodes {
     Vegetarian = "vegetarian",
     Vegan = "vegan",
     All = "all"
-}
-
-export enum LocationCodes {
-    Mensa = "HL_ME",
-    Cafeteria = "HL_CA",
-    Musikhochschule = "HL_MH"
 }
 
 export interface Filter {
@@ -127,8 +117,11 @@ export interface LastUpdate {
 export const speisePlanStore = defineStore("speiseplanStore", {
     state: () => {
         return {
-            mensaData: {} as MensaData,
-            ort: (localStorage.getItem("ort") || Ort.TH) as Ort,
+            allLocations: [] as Location[],
+            selectedCity: (localStorage.getItem("city") || "Lübeck") as string,
+            locationsInCity: [] as Location[],
+            allergenes: [] as Allergene[],
+            mealPlan: {} as Speiseplan,
             date: new Date(),
             allFilter: [] as Filter[],
             filteredMeals: [] as Meal[],
@@ -143,41 +136,47 @@ export const speisePlanStore = defineStore("speiseplanStore", {
     },
     actions: {
         async init() {
-            this.ort = Ort.TH
+            this.checkLocalStorageVersion();
             this.loadSettings();
-            await this.loadData();
+            await this.loadLocations();
+            await this.loadAllergens();
+            await this.loadMeals();
             this.loadFilter();
             this.filter();
         },
-        async loadData() {
-            const meals = await this.makeRequest<MealRequest>(Route.Meals);
+        async checkLocalStorageVersion() {
+            const version = localStorage.getItem("version");
+            if (version !== "1") {
+                localStorage.clear();
+                localStorage.setItem("version", "1");
+            }
+        },
+        async loadLocations() {
+            const reponse = await fetch(`${ENDPOINT}/${Route.Locations}`);
+            const locations = await reponse.json() as LocationRequest;
+            console.log(locations)
+            this.allLocations = locations.data;
+            this.locationsInCity = locations.data.filter((location) => location.city === this.selectedCity);
+        },
+        async loadAllergens() {
             const allergens = await this.makeRequest<AllergeneRequest>(Route.Allergens);
-
+            this.allergenes = allergens.data;
+        },
+        async loadMeals() {
+            const meals = await this.makeRequest<MealRequest>(Route.Meals);
             meals.data.forEach(m => {
                 m.date = new Date(m.date)
             })
-
-            const days = meals.data.reduce((a: Days, m: Meal) => {
-                const day = a.find((d) => d.date.getDate() === m.date.getDate() && d.date.getMonth() === m.date.getMonth() && d.date.getFullYear() === m.date.getFullYear()) || { date: m.date, meals: [] };
-                day.meals.push(m);
-                a.push(day);
-                return a;
-            }, [] as Days)
-
-            // Make sure the date is a Date object.
-            days.forEach((day) => {
-                day.date = new Date(day.date);
-            });
-
-            const speiseplan: Speiseplan = {
+            console.log(meals.data)
+            this.mealPlan = {
                 lastUpdate: new Date(meals.last_updated),
-                days
+                days: meals.data.reduce((a: Days, m: Meal) => {
+                    const day = a.find((d) => d.date.getDate() === m.date.getDate() && d.date.getMonth() === m.date.getMonth() && d.date.getFullYear() === m.date.getFullYear()) || { date: m.date, meals: [] };
+                    day.meals.push(m);
+                    a.push(day);
+                    return a;
+                }, [] as Days)
             }
-
-            this.mensaData = {
-                speiseplan,
-                allergens: allergens.data
-            };
         },
         loadSettings() {
             const setSettings = JSON.parse(localStorage.getItem("settings") || "{}") as Settings;
@@ -195,9 +194,9 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             const availableFilter: Filter[] = [];
 
             // Sort allergens by name
-            this.mensaData.allergens.sort((a, b) => a.name.localeCompare(b.name));
+            this.allergenes.sort((a, b) => a.name.localeCompare(b.name));
 
-            this.mensaData.allergens.forEach((allergen) => {
+            this.allergenes.forEach((allergen) => {
                 availableFilter.push({
                     name: allergen.name,
                     type: FilterType.Allergen,
@@ -231,27 +230,15 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             ]
             availableFilter.push(...dietaryPreferences);
 
-            const locations = [
-                {
-                    name: "Mensa",
+            const locations = this.locationsInCity.map((loc) => {
+                return {
+                    name: loc.name,
                     type: FilterType.Location,
-                    code: LocationCodes.Mensa,
-                    active: true,
-                    icon: Utensils
-                },
-                {
-                    name: "Cafeteria",
-                    type: FilterType.Location,
-                    code: LocationCodes.Cafeteria,
-                    active: true,
-                    icon: Coffee
+                    code: loc.code,
+                    active: true
                 }
-            ]
-            if (this.ort === Ort.TH) {
-                availableFilter.push(...locations);
-            } else {
-                availableFilter.push(locations[1]);
-            }
+            })
+            availableFilter.push(...locations)
 
             const groups = [
                 {
@@ -290,12 +277,14 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             localStorage.setItem("allFilter", JSON.stringify(this.allFilter));
         },
         async makeRequest<T>(route: Route): Promise<T> {
-            const url = `${ENDPOINT}/${route}?location=${this.ort}`;
+            console.log(this.selectedLocations)
+            const url = `${ENDPOINT}/${route}?location=${this.selectedLocations.map((location) => location.code).join(",")}`;
+            console.log(url)
             const response = await fetch(url);
             return await response.json() as T;
         },
         filter() {
-            const meals = this.mensaData.speiseplan.days.find((day) => day.date.getDate() === this.date.getDate())?.meals ?? [];
+            const meals = this.mealPlan.days.find((day) => day.date.getDate() === this.date.getDate())?.meals ?? [];
 
             const filtered = meals.filter((meal) => {
                 let location = false;
@@ -326,13 +315,11 @@ export const speisePlanStore = defineStore("speiseplanStore", {
             this.date.setDate(this.date.getDate() - 1);
             this.filter()
         },
-        setOrt(ort: Ort) {
-            this.ort = ort;
-            localStorage.setItem("ort", JSON.stringify(this.ort));
-            this.init();
-        },
-        toggleOrt() {
-            this.setOrt(this.ort === Ort.TH ? Ort.MH : Ort.TH);
+        async setCity(city: string) {
+            this.selectedCity = city;
+            this.locationsInCity = this.allLocations.filter((location) => location.city === city);
+            localStorage.setItem("city", city);
+            await this.init();
         },
         toggleFilter(filter: Filter) {
             if (filter.type === FilterType.DietaryPreference) {
@@ -359,6 +346,22 @@ export const speisePlanStore = defineStore("speiseplanStore", {
     getters: {
         activeFilter(): Filter[] {
             return this.allFilter.filter((filter) => filter.active);
+        },
+        selectedLocations(): Location[] {
+            let filterToUse;
+            if (this.allFilter.length > 0) {
+                filterToUse = this.allFilter
+            } else {
+                filterToUse = JSON.parse(localStorage.getItem("allFilter") || "[]") as Filter[];
+                console.log(filterToUse)
+            }
+            const locationFilters = filterToUse.filter((filter) => filter.type === FilterType.Location)
+
+            if (locationFilters.length === 0) {
+                return this.locationsInCity;
+            } else {
+                return locationFilters.filter((filter) => filter.active).map((filter) => this.allLocations.find((location) => location.code === filter.code) as Location).filter((location) => location !== undefined) as Location[];
+            }
         }
     }
 })
