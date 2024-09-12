@@ -1,4 +1,4 @@
-import { Icon, LeafyGreenIcon, EggFried, Beef, Utensils, Coffee } from 'lucide-vue-next';
+import { Icon, LeafyGreenIcon, EggFried, Beef } from 'lucide-vue-next';
 import { defineStore } from 'pinia';
 
 const ENDPOINT = "https://speiseplan.mcloud.digital/v2";
